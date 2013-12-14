@@ -65,6 +65,33 @@
         <script src="scripts/controllers/retrospectives.js"></script>
         <script src="scripts/controllers/board.js"></script>
         <script src="scripts/controllers/tickets.js"></script>
+        <script>
+          window.addEventListener("load", loadTime, false);
+
+          function loadTime() {
+            // current time
+            var now = new Date().getTime(),
+
+            // calculate page load events
+            requestStart = now - performance.timing.requestStart,
+            responseStart = now - performance.timing.responseStart,
+            responseEnd = now - performance.timing.responseEnd,
+            loadEventStart = now - performance.timing.loadEventStart,
+            loadEventEnd = now - performance.timing.loadEventEnd,
+            pageLoadTime = now - performance.timing.navigationStart,
+
+            output =
+              "NAVIGATION TIMING API:" + "\n"
+              + "requestStart: " + requestStart + "\n"
+              + "responseStart: " + responseStart + "\n"
+              + "responseEnd: " + responseEnd + "\n"
+              + "loadEventStart: " + loadEventStart + "\n"
+              + "loadEventEnd: " + loadEventEnd + "\n"
+              + "perceived page load time: " + pageLoadTime;
+
+            console.log(output);
+          }
+        </script>
         <!-- endbuild -->
 </body>
 </html>
