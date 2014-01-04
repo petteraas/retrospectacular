@@ -1,5 +1,9 @@
 {
     "db": {
         "url": "http://localhost:9200"
+    },
+    "googlePassport": {
+        returnURL: "http://retro.fronter.net/auth/google/return",
+        realm: "http://retro.fronter.net"
     }
 }
