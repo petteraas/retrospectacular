@@ -1,5 +1,6 @@
 var retrospectives = require('./models/retrospectives'),
     tickets = require('./models/tickets'),
+    timings = require('./models/timings.js'),
 
     allowCrossDomain = function(req, res, next) {
         res.header('Access-Control-Allow-Origin', '*');
@@ -23,4 +24,7 @@ exports.setup = function (api) {
     api.delete('/retrospectives/:retroId/tickets/:ticketId', tickets.deleteTicket);
 
     api.get('/wordcloud', tickets.getTicketWords);
+
+    api.get('/stats/timings', timings.getTimings);
+    api.post('/stats/timings', timings.postTiming);
 };

@@ -5,9 +5,29 @@ angular.module('retrospectApp')
         '$scope',
         '$location',
         'retrospectives',
-    function ($scope, $location, retrospectives) {
+        'timings',
+    function ($scope, $location, retrospectives, timings) {
         $scope.retrospectives = [];
         $scope.newRetrospective = {};
+
+        $scope.logTiming = function(timings) {
+            var now = new Date().getTime(),
+
+                output = {
+                    "requestStart" : now - performance.timing.requestStart,
+                    "responseStart" : now - performance.timing.responseStart,
+                    "responseEnd" : now - performance.timing.responseEnd,
+                    "loadEventStart" : now - performance.timing.loadEventStart,
+                    "loadEventEnd" : now - performance.timing.loadEventEnd,
+                    "pageLoadTime" : now - performance.timing.navigationStart
+                };
+            console.log('output', output);
+            timings.save(output, function(savedTiming) {
+                console.log('savedTiming', savedTiming);
+            }, function(error) {
+                console.error('Error saving timing', error);
+            });
+        };
 
         $scope.saveRetrospective = function () {
             var retrospective;
@@ -32,6 +52,9 @@ angular.module('retrospectApp')
         // this throws an error with cross domain
         retrospectives.get(function (response) {
             $scope.retrospectives = response.results;
+        });
+        $scope.$on('$viewContentLoaded', function() {
+            $scope.logTiming(timings);
         });
     }
 ]);
