@@ -49,9 +49,8 @@ passport.use(new googleStrategy({
 // and deserialized.
     profile.identifier = identifier;
     return done(null, profile);
-});
-    }
-));
+    });
+}));
 
 
 passport.serializeUser(function(user, done) {
