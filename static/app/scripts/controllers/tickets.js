@@ -14,7 +14,7 @@ angular.module('retrospectApp')
         function ($q, $scope, $location, $routeParams, $timeout, tickets, Lstore) {
             var storedTickets;
 
-            $scope.role;
+            $scope.role = '';
 
             $scope.retroId = $routeParams.retroId;
 
@@ -66,7 +66,7 @@ angular.module('retrospectApp')
 
             $scope.saveChanges = function () {
                 Lstore.set($scope.retroId, $scope.tickets);
-            }
+            };
 
             $scope.retroPublish = function () {
                 var promises = [];
@@ -82,7 +82,7 @@ angular.module('retrospectApp')
                 });
 
                 // When all the tickets are saved, change location
-                $q.all(promises).then(function (responses) {
+                $q.all(promises).then(function () {
                     console.log('All tickets saved');
 
                     // This is to slow down the navigation back to the board.

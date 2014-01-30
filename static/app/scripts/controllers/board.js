@@ -9,8 +9,6 @@ angular.module('retrospectApp')
         'LocaleDateTime',
 
         function ($scope, $routeParams, retrospectives, tickets, LocaleDateTime) {
-            var updateTickets;
-
             $scope.retroId = $routeParams.retroId;
             $scope.retroName = '';
             $scope.tickets = [];
