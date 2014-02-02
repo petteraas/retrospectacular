@@ -1,4 +1,5 @@
-var routes = require('./routes'),
+var authentication = require('./authentication'),
+    routes = require('./routes'),
     express = require('express'),
     api = express(),
     config = require('./config').Config;
@@ -6,7 +7,9 @@ var routes = require('./routes'),
 api.use(express.methodOverride());
 api.use(express.json());
 
-routes.setup(api,express);
+var passport = authentication.setup(api, express);
+
+routes.setup(api, express, passport);
 
 api.use(express.logger('dev'));
 
