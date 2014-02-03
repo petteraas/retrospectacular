@@ -33,5 +33,5 @@ script:
     - cd static
     - npm test
     - cd ../service
-    - npm start
+    - node app
     - mocha
