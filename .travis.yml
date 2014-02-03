@@ -17,18 +17,20 @@ install:
     - npm install
     - npm install -g bower grunt-cli mocha
     - bower install
+    - cd ../
 
 before_script:
-    - cd app/scripts/
+    - cd static/app/scripts/
     - cp config.js.example config.js
     - cd ../../../service
     - cp config.js.example config.js
     - cd ../scripts/elastic
     - curl -fsSkL --retry 9 --retry-delay 9 -XPUT 127.0.0.1:9200/_template/template_1 -d @retro_template_es.json
     - curl -fsSkL --retry 9 --retry-delay 9 -XPUT 127.0.0.1:9200/retrospectives_22012014
+    - cd ../../
 
 script:
-    - cd ../static
+    - cd static
     - npm test
     - cd ../service
     - npm start
