@@ -1,10 +1,13 @@
 var routes = require('./routes'),
     express = require('express'),
+    hal = require('express-hal'),
     api = express(),
     config = require('../config').Config;
 
 api.use(express.methodOverride());
 api.use(express.json());
+
+api.use(hal.middleware);
 
 routes.setup(api);
 

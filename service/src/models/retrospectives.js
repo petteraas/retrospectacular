@@ -33,7 +33,37 @@ exports.getRetrospectives = function (req, res) {
 
     db.getAll('retrospective').sortBy('createdAt:desc').start(start).size(limit).from(config.db.index)
         .then(function (result) {
-            res.json({'results': result, 'total': result.total});
+           // res.json({'results': result, 'total': result.total});
+           var retrospectives = {};
+           _.each(result, function(retrospective, index) {
+               retrospectives[index] = {
+                   data: retrospective,
+                   links: {
+                       self: '/retrospectives/' + retrospective.id
+                   }
+               };
+               if (result[index-1]) {
+                retrospectives[index].links.previous = '/retrospectives/' + result[index-1].id;
+               }
+               if (result[index+1]) {
+                   retrospectives[index].links.next = '/retrospectives/' + result[index+1].id;
+               }
+           });
+           res.hal({
+               data: {
+                    total: result.total,
+                    page: page,
+                    limit: limit
+               },
+               links: {
+                   self : '/retrospectives?page=' + page + '&limit=' + limit,
+                   next : '/retrospectives?page=' + (page + 1) + '&limit=' + limit,
+                   find : { href: '/retrospectives{?id}', templated: true }
+               },
+               embeds: {
+                'retrospectives': retrospectives
+               }
+           });
         })
         .fail(function (err) {
             console.log(err);
