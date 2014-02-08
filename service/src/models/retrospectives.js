@@ -20,11 +20,11 @@ exports.getRetrospectives = function (req, res) {
         page = 1;
 
     if (req.query.page) {
-        page = req.query.page;
+        page = parseInt(req.query.page, 10);
     }
 
     if (req.query.limit) {
-        limit = req.query.limit;
+        limit = parseInt(req.query.limit, 10);
     }
 
     // page is a human readable iterator
