@@ -42,7 +42,7 @@ angular.module('retrospectApp').controller('RetroCtrl', [
 
         // this throws an error with cross domain
         retrospectives.get({'limit': $scope.limit, 'page': $scope.page},function (response) {
-            $scope.retrospectives = response.results;
+            $scope.retrospectives = response._embedded.retrospectives;
         });
     }
 ]);
