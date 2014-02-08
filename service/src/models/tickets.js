@@ -26,7 +26,7 @@ exports.getTicketWords = function (req, res) {
 
 exports.getTickets = function (req, res) {
     var start = 0,
-        limit = 100,
+        limit = 5,
         page = 1;
 
     if (req.query.page) {
@@ -39,9 +39,58 @@ exports.getTickets = function (req, res) {
 
     start = (page - 1) * limit;
 
-    db.query('retroId:' + req.params.retroId).start(start).sortBy('createdAt:desc').size(limit).of('ticket').from(config.db.index)
+    db.query('retroId:' + req.params.retroId).start(start).sortBy('createdAt:desc').size(limit + 1).of('ticket').from(config.db.index)
         .then(function (result) {
-            res.json({'results': result, 'total': result.total});
+
+            var links = {
+                self: '/retrospectives/' + req.params.retroId + '/tickets/?page=' + page + '&limit=' + limit,
+                find: {
+                    href: '/retrospectives/' + req.params.retroId + '/tickets{?id}',
+                    templated: true
+                }
+            };
+
+            if (page - 1) {
+                links.previous = '/retrospectives/' + req.params.retroId + '/tickets/?page=' + (page - 1) + '&limit=' + limit;
+            }
+
+            if(result.length > limit) {
+                // @FIXME: figure out why page is suddenly a string which
+                // causes ( page + 1 ) === '11' instead of === 2    ( int )
+                links.next = '/retrospectives/' + req.params.retroId + '/tickets/?page=' + (page + 1) + '&limit=' + limit;
+                result.pop();
+            }
+
+            var tickets = {};
+            _.each(result, function(ticket, index) {
+                tickets[index] = {
+                    data: ticket,
+                    links: {
+                        self: '/retrospectives/' + ticket.retroId + '/tickets/' + ticket.id
+                    }
+                };
+                if (result[index-1]) {
+                    var previous = result[index-1];
+                    tickets[index].links.previous = '/retrospectives/' + previous.retroId + '/tickets/' + previous.id;
+                }
+                if (result[index+1]) {
+                    var next = result[index+1];
+                    tickets[index].links.next = '/retrospectives/' + next.retroId + '/tickets/' + next.id;
+                }
+            });
+
+
+            res.hal({
+                data: {
+                    total: result.total,
+                    page: page,
+                    limit: limit
+                },
+                links: links,
+                embeds: {
+                    'tickets': tickets
+                }
+            });
         })
         .fail(function (err) {
             console.log(err);
