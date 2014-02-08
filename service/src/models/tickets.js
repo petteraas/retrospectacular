@@ -26,15 +26,15 @@ exports.getTicketWords = function (req, res) {
 
 exports.getTickets = function (req, res) {
     var start = 0,
-        limit = 5,
+        limit = 100,
         page = 1;
 
     if (req.query.page) {
-        page = req.query.page;
+        page = parseInt(req.query.page, 10);
     }
 
     if (req.query.limit) {
-        limit = req.query.limit;
+        limit = parseInt(req.query.limit, 10);
     }
 
     start = (page - 1) * limit;
@@ -55,8 +55,6 @@ exports.getTickets = function (req, res) {
             }
 
             if(result.length > limit) {
-                // @FIXME: figure out why page is suddenly a string which
-                // causes ( page + 1 ) === '11' instead of === 2    ( int )
                 links.next = '/retrospectives/' + req.params.retroId + '/tickets/?page=' + (page + 1) + '&limit=' + limit;
                 result.pop();
             }
