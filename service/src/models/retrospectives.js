@@ -37,7 +37,7 @@ exports.getRetrospectives = function (req, res) {
                 self : '/retrospectives?page=' + page + '&limit=' + limit,
                 find : { href: '/retrospectives{?id}', templated: true }
             },
-            retrospectives = {};
+            retrospectives = [];
 
             if ( page - 1) {
                 links.previous = '/retrospectives?page=' + (page - 1) + '&limit=' + limit;
@@ -45,21 +45,23 @@ exports.getRetrospectives = function (req, res) {
 
             if (result.length > limit) {
                 links.next = '/retrospectives?page=' + (page + 1) + '&limit=' + limit;
+                result.pop();
             }
 
            _.each(result, function(retrospective, index) {
-               retrospectives[index] = {
-                   data: retrospective,
-                   links: {
-                       self: '/retrospectives/' + retrospective.id
-                   }
+               var links = {
+                   self: '/retrospectives/' + retrospective.id
                };
                if (result[index-1]) {
-                retrospectives[index].links.previous = '/retrospectives/' + result[index-1].id;
+                   links.previous = '/retrospectives/' + result[index-1].id;
                }
                if (result[index+1]) {
-                   retrospectives[index].links.next = '/retrospectives/' + result[index+1].id;
+                   links.next = '/retrospectives/' + result[index+1].id;
                }
+               retrospectives.push({
+                   data: retrospective,
+                   links: links
+               });
            });
 
            res.hal({
@@ -70,7 +72,7 @@ exports.getRetrospectives = function (req, res) {
                },
                links: links,
                embeds: {
-                'retrospectives': retrospectives
+                    'retrospectives': retrospectives
                }
            });
         })
