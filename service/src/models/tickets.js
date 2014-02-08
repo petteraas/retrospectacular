@@ -41,14 +41,14 @@ exports.getTickets = function (req, res) {
 
     db.query('retroId:' + req.params.retroId).start(start).sortBy('createdAt:desc').size(limit + 1).of('ticket').from(config.db.index)
         .then(function (result) {
-
             var links = {
                 self: '/retrospectives/' + req.params.retroId + '/tickets/?page=' + page + '&limit=' + limit,
                 find: {
                     href: '/retrospectives/' + req.params.retroId + '/tickets{?id}',
                     templated: true
                 }
-            };
+            },
+            tickets = [];
 
             if (page - 1) {
                 links.previous = '/retrospectives/' + req.params.retroId + '/tickets/?page=' + (page - 1) + '&limit=' + limit;
@@ -59,24 +59,23 @@ exports.getTickets = function (req, res) {
                 result.pop();
             }
 
-            var tickets = {};
             _.each(result, function(ticket, index) {
-                tickets[index] = {
-                    data: ticket,
-                    links: {
-                        self: '/retrospectives/' + ticket.retroId + '/tickets/' + ticket.id
-                    }
+                var links = {
+                    self: '/retrospectives/' + ticket.retroId + '/tickets/' + ticket.id
                 };
                 if (result[index-1]) {
                     var previous = result[index-1];
-                    tickets[index].links.previous = '/retrospectives/' + previous.retroId + '/tickets/' + previous.id;
+                    links.previous = '/retrospectives/' + previous.retroId + '/tickets/' + previous.id;
                 }
                 if (result[index+1]) {
                     var next = result[index+1];
-                    tickets[index].links.next = '/retrospectives/' + next.retroId + '/tickets/' + next.id;
+                    links.next = '/retrospectives/' + next.retroId + '/tickets/' + next.id;
                 }
+                tickets.push({
+                    data: ticket,
+                    links: links
+                });
             });
-
 
             res.hal({
                 data: {
