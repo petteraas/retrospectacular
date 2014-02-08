@@ -31,10 +31,22 @@ exports.getRetrospectives = function (req, res) {
     // start is for the machines
     start = (page - 1) * limit;
 
-    db.getAll('retrospective').sortBy('createdAt:desc').start(start).size(limit).from(config.db.index)
+    db.getAll('retrospective').sortBy('createdAt:desc').start(start).size(limit + 1).from(config.db.index)
         .then(function (result) {
-           // res.json({'results': result, 'total': result.total});
-           var retrospectives = {};
+            var links = {
+                self : '/retrospectives?page=' + page + '&limit=' + limit,
+                find : { href: '/retrospectives{?id}', templated: true }
+            },
+            retrospectives = {};
+
+            if ( page - 1) {
+                links.previous = '/retrospectives?page=' + (page - 1) + '&limit=' + limit;
+            }
+
+            if (result.length > limit) {
+                links.next = '/retrospectives?page=' + (page + 1) + '&limit=' + limit;
+            }
+
            _.each(result, function(retrospective, index) {
                retrospectives[index] = {
                    data: retrospective,
@@ -49,17 +61,14 @@ exports.getRetrospectives = function (req, res) {
                    retrospectives[index].links.next = '/retrospectives/' + result[index+1].id;
                }
            });
+
            res.hal({
                data: {
                     total: result.total,
                     page: page,
                     limit: limit
                },
-               links: {
-                   self : '/retrospectives?page=' + page + '&limit=' + limit,
-                   next : '/retrospectives?page=' + (page + 1) + '&limit=' + limit,
-                   find : { href: '/retrospectives{?id}', templated: true }
-               },
+               links: links,
                embeds: {
                 'retrospectives': retrospectives
                }
