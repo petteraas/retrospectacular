@@ -23,5 +23,7 @@ exports.setup = function (api) {
     api.post('/retrospectives/:retroId/tickets', tickets.postTicketToRetrospective);
     api.delete('/retrospectives/:retroId/tickets/:ticketId', tickets.deleteTicket);
 
+    api.get('/tickets', tickets.getAllTickets);
+
     api.get('/wordcloud', tickets.getTicketWords);
 };

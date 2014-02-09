@@ -47,6 +47,46 @@ exports.getTickets = function (req, res) {
         });
 };
 
+
+exports.getAllTickets = function (req, res) {
+    var start = 0,
+        limit = 10,
+        page = 1;
+
+    if (req.query.page) {
+        page = req.query.page;
+    }
+
+    if (req.query.limit) {
+        limit = req.query.limit;
+    }
+
+    // page is a human readable iterator
+    // start is for the machines
+    start = (page - 1) * limit;
+
+    db.getAll('ticket').sortBy('createdAt:desc').start(start).size(limit).from(config.db.index)
+        .then(function (result) {
+            result.forEach(function(ticket, index) {
+                db.query('_id:' + ticket.retroId).of('retrospective').from(config.db.index)
+                    .then(function(response) {
+                        if (response.total === 0) {
+                            result[index].isOrphan = true;
+                        }
+                    }).fail(function (err) {
+                        console.log(err);
+                    });
+            });
+            console.log('result',result);
+            res.json({'results': result, 'total': result.total});
+        })
+        .fail(function (err) {
+            console.log(err);
+            res.json(err);
+        });
+};
+
+
 exports.getTicket = function (req, res) {
     db.query('_id:' + req.params.ticketId).of('ticket').from(config.db.index)
         .then(function (result) {
