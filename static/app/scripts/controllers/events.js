@@ -8,9 +8,11 @@ angular.module('retrospectApp')
         function ($scope, socket) {
             $scope.events = [];
             socket.on('connect', function () {
+                console.log('socket connected');
                 socket.on('message', function (data) {
-                    console.log('data parsed', JSON.parse(data));
-                    $scope.events.push(JSON.parse(data));
+                    var message = JSON.parse(data.message);
+                    console.log(message);
+                    $scope.events.push(message);
                 });
             });
         }
