@@ -12,6 +12,7 @@ var _ = require('lodash'),
 exports.getRetrospective = function (req, res) {
     db.query('_id:' + req.params.retroId).of('retrospective').from(config.db.index)
         .then(function (result) {
+            sendMessage('get', result);
             res.json(result[0]);
         })
         .fail(function (err) {
@@ -39,6 +40,7 @@ exports.getRetrospectives = function (req, res) {
 
     db.getAll('retrospective').sortBy('createdAt:desc').start(start).size(limit).from(config.db.index)
         .then(function (result) {
+            sendMessage('index', result);
             res.json({'results': result, 'total': result.total});
         })
         .fail(function (err) {
@@ -57,18 +59,7 @@ producer.on('error', function(err) {
 exports.postRetrospective = function (req, res) {
     db.post(req.body).ofType('retrospective').into(config.db.index)
         .then(function (result) {
-            if (producerReady) {
-                var msg = JSON.stringify(result),
-                    payLoads = [{
-                    topic: 'retro-added-retrospective',
-                    messages: msg
-                }];
-                producer.send(payLoads, function (err, data) {
-                    if (err) {
-                        console.log('err', err);
-                    }
-                });
-            }
+            sendMessage('create', result);
             res.json(result);
         })
         .fail(function (err) {
@@ -80,6 +71,7 @@ exports.postRetrospective = function (req, res) {
 exports.putRetrospective = function (req, res) {
     db.put(req.body).ofType('retrospective').withId(req.params.retroId).into(config.db.index)
         .then(function (result) {
+            sendMessage('update', result);
             res.json(result);
         })
         .fail(function (err) {
@@ -91,10 +83,27 @@ exports.putRetrospective = function (req, res) {
 exports.deleteRetrospective = function (req, res) {
     db.delete('retrospective').withId(req.params.retroId).from(config.db.index)
         .then(function (result) {
+            sendMessage('delete', result);
             res.json(result);
         })
         .fail(function (err) {
             console.log(err);
             res.json(err);
         });
+};
+
+
+var sendMessage = function(type, messages) {
+    if (producerReady) {
+        messages.type = type;
+        var payLoads = [{
+            topic: 'retro-messenger',
+            messages: JSON.stringify(messages)
+        }];
+        producer.send(payLoads, function (err, data) {
+            if (err) {
+                console.log('err', err);
+            }
+        });
+    }
 };
