@@ -13,9 +13,10 @@ producer.on('error', function (err) {
     console.log('producer error', err);
 });
 
-exports.sendMessage = function (type, message) {
+exports.sendMessage = function (type, action, message) {
     if (producerReady) {
         message.type = type;
+        message.action = action;
         var payloads = [{
             topic: config.kafka.topic,
             messages: JSON.stringify(message)
