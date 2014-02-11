@@ -8,7 +8,10 @@ var config = require('../config').Config,
         client,
         [{
             topic: config.kafka.topic, partition: 0
-        }]
+        }],
+        {
+            autoCommit: false
+        }
     ),
 
     Producer = kafka.Producer,
