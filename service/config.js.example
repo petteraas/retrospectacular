@@ -3,6 +3,11 @@ var development = {
         "url": "http://localhost:9200",
         "index": "retrospectives_22012014"
     },
+    "kafka": {
+      "connectionString": "localhost:2181/kafka0.8",
+      "clientId": "retro-kafka-client",
+      "topic": "retro-messenger"
+    },
     "app": {
         "host":"localhost",
         "port": 3000
@@ -13,6 +18,11 @@ production = {
     "db": {
         "url": "http://localhost:9200",
         "index": "retrospectives_22012014"
+    },
+    "kafka": {
+      "connectionString": "localhost:2181/kafka0.8",
+      "clientId": "retro-kafka-client",
+      "topic": "retro-messenger"
     },
     "app": {
         "host":"localhost",
