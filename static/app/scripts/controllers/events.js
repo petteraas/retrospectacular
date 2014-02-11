@@ -12,6 +12,7 @@ angular.module('retrospectApp')
                 socket.on('message', function (data) {
                     var message = JSON.parse(data.message);
                     console.log(message);
+                    $scope.events.pop();
                     $scope.events.push(message);
                 });
             });
