@@ -1,4 +1,7 @@
 var _ = require('lodash'),
+
+    sendMessage = require('../library/Kafka').sendMessage,
+
     config = require('../config').Config,
     db = require('../wrapper'),
 
@@ -39,6 +42,7 @@ exports.getTickets = function (req, res) {
 
     db.query('retroId:' + req.params.retroId).start(start).sortBy('createdAt:desc').size(limit).of('ticket').from(config.db.index)
         .then(function (result) {
+            sendMessage('ticket', 'index', result);
             res.json({'results': result, 'total': result.total});
         })
         .fail(function (err) {
@@ -50,6 +54,7 @@ exports.getTickets = function (req, res) {
 exports.getTicket = function (req, res) {
     db.query('_id:' + req.params.ticketId).of('ticket').from(config.db.index)
         .then(function (result) {
+            sendMessage('ticket', 'get', result);
             res.json(result);
         })
         .fail(function (err) {
@@ -61,6 +66,7 @@ exports.getTicket = function (req, res) {
 exports.deleteTicket = function (req, res) {
     db.delete('ticket').withId(req.params.ticketId).from(config.db.index)
         .then(function (result) {
+            sendMessage('ticket', 'delete', result);
             res.send(204);
         })
         .fail(function (err) {
@@ -73,6 +79,7 @@ exports.putTicket = function (req, res) {
     req.body.retroId = req.params.retroId;
     db.put(req.body).ofType('ticket').withId(req.params.ticketId).into(config.db.index)
         .then(function (result) {
+            sendMessage('ticket', 'update', result);
             res.json(result);
         })
         .fail(function (err) {
@@ -87,6 +94,7 @@ exports.postTicketToRetrospective = function (req, res) {
     req.body.retroId = req.params.retroId;
     db.post(req.body).ofType('ticket').into(config.db.index)
         .then(function (result) {
+            sendMessage('ticket', 'create', result);
             res.json(result);
         })
         .fail(function (err) {
