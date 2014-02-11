@@ -1,10 +1,6 @@
 var _ = require('lodash'),
 
-    kafka = require('kafka-node'),
-    Producer = kafka.Producer,
-    kafkaClient = new kafka.Client('mq.dev.fronter.net:2181/', 'retro-kafka-client'),
-    producer = new Producer(kafkaClient),
-    producerReady = false,
+    sendMessage = require('../library/Kafka').sendMessage,
 
     config = require('../config').Config,
     db = require('../wrapper');
@@ -49,13 +45,6 @@ exports.getRetrospectives = function (req, res) {
         });
 };
 
-producer.on('ready', function () {
-    producerReady = true;
-});
-producer.on('error', function(err) {
-    console.log('err', err);
-});
-
 exports.postRetrospective = function (req, res) {
     db.post(req.body).ofType('retrospective').into(config.db.index)
         .then(function (result) {
@@ -90,20 +79,4 @@ exports.deleteRetrospective = function (req, res) {
             console.log(err);
             res.json(err);
         });
-};
-
-
-var sendMessage = function(type, messages) {
-    if (producerReady) {
-        messages.type = type;
-        var payLoads = [{
-            topic: 'retro-messenger',
-            messages: JSON.stringify(messages)
-        }];
-        producer.send(payLoads, function (err, data) {
-            if (err) {
-                console.log('err', err);
-            }
-        });
-    }
 };
