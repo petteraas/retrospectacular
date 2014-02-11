@@ -7,7 +7,7 @@ var config = require('../config').Config,
     consumer = new Consumer(
         client,
         [{
-            topic: config.kafka.topic, partition: 0
+            topic: config.kafka.topic
         }],
         {
             autoCommit: false
@@ -17,6 +17,18 @@ var config = require('../config').Config,
     Producer = kafka.Producer,
     producer = new Producer(client),
     producerReady = false;
+
+client.on('ready', function() {
+    console.log('kafka client ready');
+});
+
+client.on('error', function (err) {
+    console.log('kafka client error', err);
+});
+
+consumer.on('error', function(err) {
+    console.log('consumer error', err);
+});
 
 producer.on('ready', function () {
     producerReady = true;
