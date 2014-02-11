@@ -1,7 +1,17 @@
 var config = require('../config').Config,
+
     kafka = require('kafka-node'),
-    Producer = kafka.Producer,
     client = new kafka.Client(config.kafka.connectionString, config.kafka.clientId),
+
+    Consumer = kafka.Consumer,
+    consumer = new Consumer(
+        client,
+        [{
+            topic: config.kafka.topic, partition: 0
+        }]
+    ),
+
+    Producer = kafka.Producer,
     producer = new Producer(client),
     producerReady = false;
 
@@ -29,3 +39,5 @@ exports.sendMessage = function (type, action, message) {
         });
     }
 };
+
+exports.consumer = consumer;
