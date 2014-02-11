@@ -1,2 +1,17 @@
 <h1>Events</h1>
-<ul id="events"></ul>
+<ul id="events">
+    <li ng-repeat="event in events">
+        <dl>
+            <dt>Type</dt>
+            <dd>{{event.type}}</dd>
+
+            <dt>Action</dt>
+            <dd>{{event.action}}</dd>
+
+            <dt>Items</dt>
+            <dd><ul>
+                <li ng-repeat="item in event.items">{{item.name}}, createdAt:{{item.createdAt}} id: {{item.id}}</li>
+            </ul></dd>
+        </dl>
+    </li>
+</ul>
