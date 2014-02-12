@@ -3,6 +3,7 @@ var routes = require('./routes'),
     api = express(),
     config = require('./config').Config;
 
+api.use(require('chaos-monkeyware')());
 api.use(express.methodOverride());
 api.use(express.json());
 
