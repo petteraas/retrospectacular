@@ -37,14 +37,17 @@ exports.getRetrospectives = function (req, res) {
 
            result.forEach(function(retrospective, index) {
                var links = {
-                   self: '/retrospectives/' + retrospective.id
+                   self: paginator.getItemLink('retrospective', retrospective)
                };
+
                if (result[index-1]) {
-                   links.previous = '/retrospectives/' + result[index-1].id;
+                   links.previous = paginator.getItemLink('retrospective', result[index - 1]);
                }
-               if (result[index+1]) {
-                   links.next = '/retrospectives/' + result[index+1].id;
+
+               if (result[index + 1]) {
+                   links.next = paginator.getItemLink('retrospective', result[index + 1]);
                }
+
                retrospectives.push({
                    data: retrospective,
                    links: links

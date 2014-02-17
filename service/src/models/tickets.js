@@ -50,16 +50,17 @@ exports.getTickets = function (req, res) {
 
             result.forEach(function(ticket, index) {
                 var links = {
-                    self: '/retrospectives/' + ticket.retroId + '/tickets/' + ticket.id
+                    self: paginator.getItemLink('ticket', ticket)
                 };
+
                 if (result[index-1]) {
-                    var previous = result[index-1];
-                    links.previous = '/retrospectives/' + previous.retroId + '/tickets/' + previous.id;
+                    links.previous = paginator.getItemLink('ticket', result[index - 1]);
                 }
+
                 if (result[index+1]) {
-                    var next = result[index+1];
-                    links.next = '/retrospectives/' + next.retroId + '/tickets/' + next.id;
+                    links.next = paginator.getItemLink('ticket', result[index + 1]);
                 }
+
                 tickets.push({
                     data: ticket,
                     links: links
