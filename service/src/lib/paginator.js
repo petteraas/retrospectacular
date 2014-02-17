@@ -50,3 +50,22 @@ exports.getItemLink = function (type, item) {
         link : link
     };
 };
+
+exports.getBulkLinks = function (baseUrl, parameters, results) {
+    var links = {
+        self: baseUrl + '?page=' + parameters.page + '&limit=' + parameters.limit,
+        find: {
+            href: baseUrl + '{?id}',
+            templated: true
+        }
+    };
+
+    if (parameters.page - 1) {
+        links.previous = baseUrl + '?page=' + (parameters.page - 1) + '&limit=' + parameters.limit;
+    }
+
+    if (results.length > parameters.limit) {
+        links.next = baseUrl + '?page=' + ( parameters.page + 1) + '&limit=' + parameters.limit;
+    }
+    return links;
+};
