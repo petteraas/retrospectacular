@@ -1,7 +1,8 @@
 'use strict';
 
 var config = require('../../config').Config,
-    db = require('../wrapper');
+    db = require('../wrapper'),
+    paginator = require('../lib/paginator');
 
 exports.getRetrospective = function (req, res) {
     db.query('_id:' + req.params.retroId).of('retrospective').from(config.db.index)
@@ -15,40 +16,26 @@ exports.getRetrospective = function (req, res) {
 };
 
 exports.getRetrospectives = function (req, res) {
-    var start = 0,
-        limit = 10,
-        page = 1;
+    var parameters = paginator.getParameters(req);
 
-    if (req.query.page) {
-        page = parseInt(req.query.page, 10);
-    }
-
-    if (req.query.limit) {
-        limit = parseInt(req.query.limit, 10);
-    }
-
-    // page is a human readable iterator
-    // start is for the machines
-    start = (page - 1) * limit;
-
-    db.getAll('retrospective').sortBy('createdAt:desc').start(start).size(limit + 1).from(config.db.index)
+    db.getAll('retrospective').sortBy('createdAt:desc').start(parameters.start).size(parameters.limit + 1).from(config.db.index)
         .then(function (result) {
             var links = {
-                self : '/retrospectives?page=' + page + '&limit=' + limit,
+                self : '/retrospectives?page=' + parameters.page + '&limit=' + parameters.limit,
                 find : { href: '/retrospectives{?id}', templated: true }
             },
             retrospectives = [];
 
-            if ( page - 1) {
-                links.previous = '/retrospectives?page=' + (page - 1) + '&limit=' + limit;
+            if (parameters.page - 1) {
+                links.previous = '/retrospectives?page=' + (parameters.page - 1) + '&limit=' + parameters.limit;
             }
 
-            if (result.length > limit) {
-                links.next = '/retrospectives?page=' + (page + 1) + '&limit=' + limit;
+            if (result.length > parameters.limit) {
+                links.next = '/retrospectives?page=' + (parameters.page + 1) + '&limit=' + parameters.limit;
                 result.pop();
             }
 
-           _.each(result, function(retrospective, index) {
+           result.forEach(function(retrospective, index) {
                var links = {
                    self: '/retrospectives/' + retrospective.id
                };
@@ -67,8 +54,8 @@ exports.getRetrospectives = function (req, res) {
            res.hal({
                data: {
                     total: result.total,
-                    page: page,
-                    limit: limit
+                    page: parameters.page,
+                    limit: parameters.limit
                },
                links: links,
                embeds: {
