@@ -1,5 +1,13 @@
 'use strict';
 
+var getRetroId = function (type, item) {
+    if (type==='ticket') {
+        return item.retroId;
+    } else {
+        return item.id;
+    }
+};
+
 exports.getParameters = function(req) {
     var start = 0,
         limit = 10,
@@ -21,5 +29,24 @@ exports.getParameters = function(req) {
         start: start,
         page: page,
         limit: limit
+    };
+};
+
+exports.getItemLink = function (type, item) {
+    var link = '/retrospectives',
+        retroId = 0;
+
+    if (!item.id) {
+        return false;
     }
+
+    retroId = getRetroId(type, item);
+    link += '/' + retroId;
+
+    if (type === 'ticket') {
+        link += '/tickets/' + item.id;
+    }
+    return {
+        link : link
+    };
 };
