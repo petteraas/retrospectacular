@@ -27,36 +27,36 @@ exports.getRetrospectives = function (req, res) {
                 result.pop();
             }
 
-           result.forEach(function(retrospective, index) {
-               var links = {
-                   self: paginator.getItemLink('retrospective', retrospective)
-               };
+            result.foreach(function(retrospective, index) {
+                var links = {
+                    self: paginator.getitemlink('retrospective', retrospective)
+                };
 
-               if (result[index-1]) {
-                   links.previous = paginator.getItemLink('retrospective', result[index - 1]);
-               }
+                if (result[index-1]) {
+                    links.previous = paginator.getitemlink('retrospective', result[index - 1]);
+                }
 
-               if (result[index + 1]) {
-                   links.next = paginator.getItemLink('retrospective', result[index + 1]);
-               }
+                if (result[index + 1]) {
+                    links.next = paginator.getitemlink('retrospective', result[index + 1]);
+                }
 
-               retrospectives.push({
-                   data: retrospective,
-                   links: links
-               });
-           });
+                retrospectives.push({
+                    data: retrospective,
+                    links: links
+                });
+            });
 
-           res.hal({
-               data: {
+            res.hal({
+                data: {
                     total: result.total,
                     page: parameters.page,
                     limit: parameters.limit
-               },
-               links: links,
-               embeds: {
+                },
+                links: links,
+                embeds: {
                     'retrospectives': retrospectives
-               }
-           });
+                }
+            });
         })
         .fail(function (err) {
             console.log(err);

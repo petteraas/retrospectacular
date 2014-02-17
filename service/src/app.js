@@ -1,3 +1,5 @@
+'use strict';
+
 var routes = require('./routes'),
     express = require('express'),
     hal = require('express-hal'),
