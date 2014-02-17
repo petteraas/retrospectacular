@@ -30,21 +30,10 @@ exports.getTickets = function (req, res) {
 
     db.query('retroId:' + req.params.retroId).start(parameters.start).sortBy('createdAt:desc').size(parameters.limit + 1).of('ticket').from(config.db.index)
         .then(function (result) {
-            var links = {
-                self: '/retrospectives/' + req.params.retroId + '/tickets/?page=' + parameters.page + '&limit=' + parameters.limit,
-                find: {
-                    href: '/retrospectives/' + req.params.retroId + '/tickets{?id}',
-                    templated: true
-                }
-            },
+            var links = paginator.getBulkLinks('/retrospectives' + req.params.retroId + '/tickets', parameters, result),
             tickets = [];
 
-            if (parameters.page - 1) {
-                links.previous = '/retrospectives/' + req.params.retroId + '/tickets/?page=' + (parameters.page - 1) + '&limit=' + parameters.limit;
-            }
-
-            if(result.length > parameters.limit) {
-                links.next = '/retrospectives/' + req.params.retroId + '/tickets/?page=' + (parameters.page + 1) + '&limit=' + parameters.limit;
+            if(links.next) {
                 result.pop();
             }
 

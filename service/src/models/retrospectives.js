@@ -20,18 +20,10 @@ exports.getRetrospectives = function (req, res) {
 
     db.getAll('retrospective').sortBy('createdAt:desc').start(parameters.start).size(parameters.limit + 1).from(config.db.index)
         .then(function (result) {
-            var links = {
-                self : '/retrospectives?page=' + parameters.page + '&limit=' + parameters.limit,
-                find : { href: '/retrospectives{?id}', templated: true }
-            },
+            var links = paginator.getBulkLinks('/retrospectives', parameters, result),
             retrospectives = [];
 
-            if (parameters.page - 1) {
-                links.previous = '/retrospectives?page=' + (parameters.page - 1) + '&limit=' + parameters.limit;
-            }
-
-            if (result.length > parameters.limit) {
-                links.next = '/retrospectives?page=' + (parameters.page + 1) + '&limit=' + parameters.limit;
+            if (links.next) {
                 result.pop();
             }
 
