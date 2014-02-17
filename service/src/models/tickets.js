@@ -3,6 +3,7 @@
 var _ = require('lodash'),
     config = require('../../config').Config,
     db = require('../wrapper'),
+    paginator = require('../lib/paginator'),
 
     explodeMessages = function (results) {
         var words = [];
@@ -25,24 +26,12 @@ exports.getTicketWords = function (req, res) {
 };
 
 exports.getTickets = function (req, res) {
-    var start = 0,
-        limit = 100,
-        page = 1;
+    var parameters = paginator.getParameters(req);
 
-    if (req.query.page) {
-        page = parseInt(req.query.page, 10);
-    }
-
-    if (req.query.limit) {
-        limit = parseInt(req.query.limit, 10);
-    }
-
-    start = (page - 1) * limit;
-
-    db.query('retroId:' + req.params.retroId).start(start).sortBy('createdAt:desc').size(limit + 1).of('ticket').from(config.db.index)
+    db.query('retroId:' + req.params.retroId).start(parameters.start).sortBy('createdAt:desc').size(parameters.limit + 1).of('ticket').from(config.db.index)
         .then(function (result) {
             var links = {
-                self: '/retrospectives/' + req.params.retroId + '/tickets/?page=' + page + '&limit=' + limit,
+                self: '/retrospectives/' + req.params.retroId + '/tickets/?page=' + parameters.page + '&limit=' + parameters.limit,
                 find: {
                     href: '/retrospectives/' + req.params.retroId + '/tickets{?id}',
                     templated: true
@@ -50,16 +39,16 @@ exports.getTickets = function (req, res) {
             },
             tickets = [];
 
-            if (page - 1) {
-                links.previous = '/retrospectives/' + req.params.retroId + '/tickets/?page=' + (page - 1) + '&limit=' + limit;
+            if (parameters.page - 1) {
+                links.previous = '/retrospectives/' + req.params.retroId + '/tickets/?page=' + (parameters.page - 1) + '&limit=' + parameters.limit;
             }
 
-            if(result.length > limit) {
-                links.next = '/retrospectives/' + req.params.retroId + '/tickets/?page=' + (page + 1) + '&limit=' + limit;
+            if(result.length > parameters.limit) {
+                links.next = '/retrospectives/' + req.params.retroId + '/tickets/?page=' + (parameters.page + 1) + '&limit=' + parameters.limit;
                 result.pop();
             }
 
-            _.each(result, function(ticket, index) {
+            result.forEach(function(ticket, index) {
                 var links = {
                     self: '/retrospectives/' + ticket.retroId + '/tickets/' + ticket.id
                 };
@@ -80,8 +69,8 @@ exports.getTickets = function (req, res) {
             res.hal({
                 data: {
                     total: result.total,
-                    page: page,
-                    limit: limit
+                    page: parameters.page,
+                    limit: parameters.limit
                 },
                 links: links,
                 embeds: {
