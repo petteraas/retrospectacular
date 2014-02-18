@@ -56,6 +56,7 @@ exports.getTickets = function (req, res) {
                 });
             });
 
+            res.set('Content-Type', 'application/hal+json');
             res.hal({
                 data: {
                     total: result.total,
