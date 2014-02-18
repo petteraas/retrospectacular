@@ -376,3 +376,18 @@ exports.createIndex = function (indexName) {
 
     return defer.promise;
 };
+
+exports.ping = function (requestTimeout) {
+    var defer = q.defer();
+
+    client.ping({
+        requestTimeout: requestTimeout
+    }, function (error) {
+        if (error) {
+            defer.reject('Cluster is down');
+        } else {
+            defer.resolve('Cluster is up');
+        }
+    });
+    return defer.promise;
+};
