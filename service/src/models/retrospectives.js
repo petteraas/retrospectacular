@@ -27,17 +27,17 @@ exports.getRetrospectives = function (req, res) {
                 result.pop();
             }
 
-            result.foreach(function(retrospective, index) {
+            result.forEach(function(retrospective, index) {
                 var links = {
-                    self: paginator.getitemlink('retrospective', retrospective)
+                    self: paginator.getItemLink('retrospective', retrospective)
                 };
 
                 if (result[index-1]) {
-                    links.previous = paginator.getitemlink('retrospective', result[index - 1]);
+                    links.previous = paginator.getItemLink('retrospective', result[index - 1]);
                 }
 
                 if (result[index + 1]) {
-                    links.next = paginator.getitemlink('retrospective', result[index + 1]);
+                    links.next = paginator.getItemLink('retrospective', result[index + 1]);
                 }
 
                 retrospectives.push({
