@@ -2,7 +2,7 @@
 
 var retrospectives = require('./models/retrospectives'),
     tickets = require('./models/tickets'),
-    status = require('./models/status'),
+    state = require('./models/state'),
 
     allowCrossDomain = function(req, res, next) {
         res.header('Access-Control-Allow-Origin', '*');
@@ -28,5 +28,5 @@ exports.setup = function (api) {
 
     api.get('/wordcloud', tickets.getTicketWords);
 
-    api.get('/status/ping', status.ping);
+    api.get('/state/ping', state.ping);
 };

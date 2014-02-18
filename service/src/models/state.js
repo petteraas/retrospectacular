@@ -4,8 +4,8 @@ var db = require('../wrapper');
 
 exports.ping = function (req, res) {
     db.ping()
-        .then(function(status) {
-            res.json({'result': status});
+        .then(function(state) {
+            res.json({'result': state});
         })
         .fail(function (err) {
             res.json({'result': err});
