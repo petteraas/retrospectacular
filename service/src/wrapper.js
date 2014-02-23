@@ -127,7 +127,19 @@ exports.query = function (queryString) {
 
             client.search({
                 index: indexName,
-                q: queryString,
+                body: {
+                    query: {
+                        match: queryString
+                    },
+                    facets: {
+                        'histo1': {
+                            'date_histogram': {
+                                'field': 'createdAt',
+                                'interval': 'day'
+                            }
+                        }
+                    }
+                },
                 from: start,
                 size: size,
                 sort: sort
@@ -190,7 +202,21 @@ exports.getAll = function (type) {
 
             client.search({
                 index: indexName,
-                q: '_type:' + type,
+                body: {
+                    query: {
+                        match: {
+                            '_type' : type
+                        }
+                    },
+                    facets: {
+                        'sameDay': {
+                            'date_histogram': {
+                                'field': 'createdAt',
+                                'interval': 'day'
+                            }
+                        }
+                    }
+                },
                 from: start,
                 sort: sort,
                 size: size
@@ -200,8 +226,11 @@ exports.getAll = function (type) {
                     defer.reject(error);
                     return;
                 }
+
                 response = adaptResults(results.hits.hits);
                 response.total = results.hits.total;
+                response.facets = results.facets;
+
                 defer.resolve(response);
             });
 

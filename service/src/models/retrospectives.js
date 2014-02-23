@@ -33,7 +33,11 @@ exports.getRetrospectives = function (req, res) {
 
     db.getAll('retrospective').sortBy('createdAt:desc').start(start).size(limit).from(config.db.index)
         .then(function (result) {
-            res.json({'results': result, 'total': result.total});
+            res.json({
+                'results': result,
+                'total': result.total,
+                'facets': result.facets
+            });
         })
         .fail(function (err) {
             console.log(err);
