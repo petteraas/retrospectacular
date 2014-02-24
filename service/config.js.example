@@ -22,6 +22,11 @@ production = {
     'app': {
         'host':'localhost',
         'port': 3000
+    },
+    logstash: {
+      host: '127.0.0.1',
+      port: 28777,
+      node_name: 'api-retrospectacular'
     }
 };
 
