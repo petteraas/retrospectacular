@@ -8,8 +8,10 @@ angular.module('retrospectApp').controller('TicketCtrl', [
         '$timeout',
         'tickets',
         'Lstore',
+        'Page',
 
-        function ($q, $scope, $location, $routeParams, $timeout, tickets, Lstore) {
+        function ($q, $scope, $location, $routeParams, $timeout, tickets, Lstore, Page) {
+            Page.setTitle('Retrospectacular:Tickets');
             var storedTickets;
 
             $scope.retroId = $routeParams.retroId;

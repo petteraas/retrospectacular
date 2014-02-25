@@ -4,8 +4,10 @@ angular.module('retrospectApp').controller('RetroCtrl', [
     '$scope',
     '$location',
     'retrospectives',
+    'Page',
 
-    function ($scope, $location, retrospectives) {
+    function ($scope, $location, retrospectives, Page) {
+        Page.setTitle('Retrospectacular');
         $scope.retrospectives = [];
         $scope.newRetrospective = {};
         $scope.limit = 10000;

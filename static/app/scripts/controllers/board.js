@@ -6,8 +6,9 @@ angular.module('retrospectApp')
         '$routeParams',
         'retrospectives',
         'tickets',
+        'Page',
 
-        function ($scope, $routeParams, retrospectives, tickets) {
+        function ($scope, $routeParams, retrospectives, tickets, Page) {
 
             $scope.retroId = $routeParams.retroId;
             $scope.retroName = '';
@@ -35,6 +36,7 @@ angular.module('retrospectApp')
 
             retrospectives.get({'retroId': $scope.retroId}, function (retrospective) {
                 $scope.retroName = retrospective.name;
+                Page.setTitle($scope.retroName);
             });
 
             $scope.updateTickets();
