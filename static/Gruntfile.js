@@ -310,6 +310,39 @@ module.exports = function (grunt) {
                     ]
                 }
             }
+        },
+        hashres: {
+            options: {
+                encoding: 'utf8',
+                fileNameFormat: '${name}.${hash}.cache.${ext}',
+                renameFiles: true
+            },
+            css: {
+                options: {},
+                src: [
+                    'app/styles.css'
+                ],
+                dest: 'app/**/*.html'
+            },
+            js: {
+                options: {},
+                src: [
+                    'app/**/*.js'
+                ],
+                dest: 'app/**/*.html'
+            },
+            images: {
+                options: {},
+                src: [
+                    'app/images/*.png'
+                ],
+                dest: [
+                    'app/**/*.html',
+                    'app/**/*.js',
+                    'app/**/*.css',
+                    'app/**/*.md'
+                ]
+            }
         }
     });
 
