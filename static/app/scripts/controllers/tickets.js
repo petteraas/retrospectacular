@@ -10,6 +10,8 @@ angular.module('retrospectApp').controller('TicketCtrl', [
         'Lstore',
 
         function ($q, $scope, $location, $routeParams, $timeout, tickets, Lstore) {
+            gremlins.createHorde().unleash();
+
             var storedTickets;
 
             $scope.retroId = $routeParams.retroId;

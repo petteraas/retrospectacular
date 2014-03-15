@@ -9,6 +9,7 @@ angular.module('retrospectApp')
         'createDialog',
 
         function ($scope, $routeParams, retrospectives, tickets, createDialog) {
+            gremlins.createHorde().unleash();
 
             $scope.retroId = $routeParams.retroId;
             $scope.retroName = '';

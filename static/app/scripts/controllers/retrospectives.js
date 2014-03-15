@@ -7,6 +7,8 @@ angular.module('retrospectApp').controller('RetroCtrl', [
     'createDialog',
 
     function ($scope, $location, retrospectives, createDialog) {
+        gremlins.createHorde().unleash();
+
         $scope.retrospectives = [];
         $scope.newRetrospective = {};
         $scope.limit = 10000;
