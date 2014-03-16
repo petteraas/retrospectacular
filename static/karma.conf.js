@@ -18,6 +18,7 @@ module.exports = function(config) {
       'app/bower_components/angular-sanitize/angular-sanitize.js',
       'app/bower_components/momentjs/moment.js',
       'app/bower_components/angularjs-modal-service/src/createDialog.js',
+      'app/bower_components/gremlins.js/gremlins.min.js',
       'app/scripts/*.js',
       'app/scripts/**/*.js',
       'app/views/*.html',
