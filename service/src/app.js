@@ -1,18 +1,26 @@
-require('newrelic');
 
-var routes = require('./routes'),
-    logs = require('./logs'),
-    express = require('express'),
-    api = express(),
-    config = require('../config').Config;
+var cluster = require('cluster'),
+    os = require('os');
 
-api.use(express.methodOverride());
-api.use(express.json());
+if (cluster.isMaster) {
+    for (var i = 0; i < os.cpus().length; i++) {
+        cluster.fork();
+    }
+} else {
+    var routes = require('./routes'),
+        logs = require('./logs'),
+        express = require('express'),
+        api = express(),
+        config = require('../config').Config;
 
-logs.setupLogger(api);
+    api.use(express.methodOverride());
+    api.use(express.json());
 
-routes.setup(api);
+    logs.setupLogger(api);
 
-logs.setupErrorLogger(api);
+    routes.setup(api);
 
-api.listen(config.app.port, config.app.host);
+    logs.setupErrorLogger(api);
+
+    api.listen(config.app.port, config.app.host);
+}
