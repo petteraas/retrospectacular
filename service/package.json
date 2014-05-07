@@ -22,11 +22,11 @@
     "url": "https://github.com/FronterAS/retrospectacular/issues"
   },
   "dependencies": {
-    "express": "~3.4.6",
-    "q": "~0.9.7",
-    "lodash": "~2.4.1",
-    "elasticsearch": "~1.0.3",
+    "elasticsearch": "^2.1.4",
+    "express": "^4.1.1",
     "express-winston": "~0.2.5",
+    "lodash": "~2.4.1",
+    "q": "^1.0.1",
     "winston": "~0.7.2"
   },
   "devDependencies": {
